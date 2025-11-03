@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
+#include <sstream>
 
+#include "bootstrap.h"
 using namespace std;
 
 void printHelp()
@@ -29,13 +31,47 @@ void evalCommand(string line)
     else if (line.rfind("find", 0) == 0)
     {
         // Look up the appropriate datastructure to find if the inventory exist
-        cout << "YET TO IMPLEMENT!" << endl;
+        string cmd, id;
+        stringstream ss(line);
+        ss >> cmd >> id;
+
+        Product result;
+        if (inventoryById.find(id, result))
+        {
+            cout << "Product found:\n";
+            cout << " ID: " << result.uniqId << "\n";
+            cout << " Name: " << result.productName << "\n";
+            cout << " Category: " << result.category << "\n";
+            cout << " Price: $" << result.price << "\n";
+        }
+        else
+        {
+            cout << "Inventory/Product not found\n";
+        }
+        return;
     }
     // if line starts with listInventory
     else if (line.rfind("listInventory") == 0)
     {
         // Look up the appropriate datastructure to find all inventory belonging to a specific category
-        cout << "YET TO IMPLEMENT!" << endl;
+        string cmd, category;
+        stringstream ss(line);
+        ss >> cmd >> category;
+
+        MyVector<Product> list;
+        if (inventoryByCategory.find(category, list))
+        {
+            cout << "Products in category '" << category << "':\n";
+            for (size_t i = 0; i < list.size(); i++)
+            {
+                cout << "  [" << list[i].uniqId << "] " << list[i].productName << "\n";
+            }
+        }
+        else
+        {
+            cout << "Invalid Category\n";
+        }
+        return;
     }
 }
 
@@ -44,6 +80,7 @@ void bootStrap()
     cout << "\n Welcome to Amazon Inventory Query System" << endl;
     cout << " enter :quit to exit. or :help to list supported commands." << endl;
     cout << "\n> ";
+    loadSampleData();
     // TODO: Do all your bootstrap operations here
     // example: reading from CSV and initializing the data structures
     // Don't dump all code into this single function
